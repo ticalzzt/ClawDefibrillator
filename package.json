@@ -1,37 +1,46 @@
 {
-  "name": "@tical/openclaw-anti-freeze",
+  "name": "@tical/claw-defibrillator",
   "version": "1.0.0",
-  "description": "Prevent OpenClaw from hanging/freezing. No more reinstalling your system.",
+  "description": "🚑 Defibrillator for OpenClaw - Shock it back to life when it hangs/freezes",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "bin": {
-    "openclaw-watchdog": "dist/cli.js"
+    "claw-defib": "dist/cli.js",
+    "defib": "dist/cli.js"
   },
   "scripts": {
     "build": "tsc",
-    "dev": "ts-node src/watchdog.ts",
+    "dev": "ts-node src/defibrillator.ts",
     "test": "jest",
     "lint": "eslint src/**/*.ts",
     "prepare": "npm run build"
   },
   "keywords": [
     "openclaw",
+    "claw",
+    "lobster",
     "ai-agent",
     "watchdog",
+    "defibrillator",
+    "hang",
+    "freeze",
+    "crash",
+    "recovery",
+    "resuscitate",
     "stability",
-    "hang-prevention",
-    "process-management"
+    "process-management",
+    "keepalive"
   ],
   "author": "tiCal zzt",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/tical/openclaw-anti-freeze.git"
+    "url": "https://github.com/ticalzzt/ClawDefibrillator.git"
   },
   "bugs": {
-    "url": "https://github.com/tical/openclaw-anti-freeze/issues"
+    "url": "https://github.com/ticalzzt/ClawDefibrillator/issues"
   },
-  "homepage": "https://github.com/tical/openclaw-anti-freeze#readme",
+  "homepage": "https://github.com/ticalzzt/ClawDefibrillator#readme",
   "engines": {
     "node": ">=18.0.0"
   },

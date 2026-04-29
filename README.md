@@ -1,160 +1,197 @@
-# OpenClaw Anti-Freeze Guardian 🛡️
+# 🚑 ClawDefibrillator
 
-**Prevent OpenClaw from hanging/freezing. No more reinstalling your system.**
+**When OpenClaw flatlines, shock it back to life.**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue.svg)](https://www.typescriptlang.org/)
 [![Node](https://img.shields.io/badge/Node-18+-green.svg)](https://nodejs.org/)
-[![CI](https://github.com/ticalzzt/openclaw-anti-freeze/actions/workflows/ci.yml/badge.svg)](https://github.com/ticalzzt/openclaw-anti-freeze/actions)
 
-> 🦞 **OpenClaw** is an amazing AI coding assistant, but it can hang indefinitely. This tool fixes that.
+> *"Clear! ⚡ OpenClaw is now stable."*
 
-## The Problem
+## The Problem: OpenClaw Cardiac Arrest
 
-OpenClaw users frequently experience **system-freezing hangs** that require:
-- ❌ Manual process killing
-- ❌ Session file deletion
-- ❌ **Full system reinstall** (worst case)
+OpenClaw is a powerful AI coding assistant, but it suffers from **sudden cardiac arrest**:
 
-Common hang scenarios:
-- **Session cleanup deadlock** - When session files grow >15MB, `rotateSessionFile` enters an infinite loop ([OpenClaw Issue #73924](https://github.com/openclaw/openclaw/issues/73924))
-- **Gateway event loop blocking** - Synchronous file I/O blocks the main thread
-- **Memory pressure** - Active-Memory and Dreaming features compete for resources
-- **Uncaught async errors** - Promise rejections not handled properly
-- **Plugin failures** - Misbehaving plugins freeze the entire system
+- 💔 **Session cleanup deadlock** - `rotateSessionFile` enters infinite loop when session > 15MB
+- 💔 **Gateway event loop blocking** - Synchronous I/O blocks the main thread  
+- 💔 **Status command flatline** - `openclaw status` hangs indefinitely
+- 💔 **Plugin config mismatch** - Plugins in `plugins.allow` don't exist
+- 💔 **SSL certificate failure** - Webhooks die silently
 
-## The Solution
+**Result:** Users forced to **reinstall their entire system** 💀
 
-This project implements a **multi-layer defense** against OpenClaw hangs:
+## The Solution: Defibrillation
 
-| Layer | Mechanism | Recovery |
-|-------|-----------|----------|
-| **Watchdog** | Process-level heartbeat monitoring | Automatic restart |
-| **Timeouts** | Every async operation has a deadline | Cancel & retry |
-| **Session Guard** | Prevents session file bloat | Auto-truncate |
-| **Plugin Isolation** | Workers for plugin execution | Kill & reload |
-| **Memory Guard** | Monitors heap usage | GC & cleanup |
+```
+     ⚡ CLEAR! ⚡
+    
+    OpenClaw was:  FLATLINED  →  Now:  STABLE
+    
+    [████████░░░░░░░░░░]  →  [██████████████████]
+          0%                    100%
+```
+
+ClawDefibrillator monitors OpenClaw's vital signs and **automatically shocks it back to life** when it hangs.
+
+## Features
+
+| Vital Sign | Monitor | Action |
+|-----------|---------|--------|
+| 💓 Heartbeat | Process health check | Auto-restart if flatline |
+| 🧠 Brain activity | Session file size | Truncate before explosion |
+| 🫁 Breathing | Memory pressure | Emergency GC when choking |
+| 🩺 Blood pressure | Config validation | Fix before startup crash |
 
 ## Quick Start
 
-### Option 1: Bash Wrapper (Recommended - Zero Dependencies)
+### One-Liner Install
 
 ```bash
-# Download and run
-wget https://raw.githubusercontent.com/ticalzzt/openclaw-anti-freeze/main/scripts/openclaw-safe.sh
-chmod +x openclaw-safe.sh
-./openclaw-safe.sh
+curl -fsSL https://raw.githubusercontent.com/ticalzzt/ClawDefibrillator/main/scripts/defib.sh | bash
 ```
 
-### Option 2: Clone and Run
+### Manual Install
 
 ```bash
-git clone https://github.com/ticalzzt/openclaw-anti-freeze.git
-cd openclaw-anti-freeze
-./scripts/openclaw-safe.sh
-```
-
-### Option 3: NPM (Coming Soon)
-
-```bash
-npm install -g @tical/openclaw-anti-freeze
-openclaw-watchdog
+git clone https://github.com/ticalzzt/ClawDefibrillator.git
+cd ClawDefibrillator
+./scripts/defib.sh
 ```
 
 ## How It Works
 
 ```
-┌─────────────────┐     Heartbeat      ┌─────────────────┐
-│   Watchdog      │◄───────────────────│    OpenClaw     │
-│   (Parent)      │    every 5s        │   (Child)       │
-└────────┬────────┘                     └─────────────────┘
+┌─────────────────┐
+│  ClawDefibrillator │◄── You are here
+│   (Monitoring)   │
+└────────┬────────┘
          │
-         │ Missed 3 heartbeats
+    Monitors every 5s
+         │
          ▼
 ┌─────────────────┐
-│   Recovery      │
-│  1. SIGTERM     │
-│  2. SIGKILL     │
-│  3. Cleanup     │
-│  4. Restart     │
+│    OpenClaw     │
+│   (Patient)     │
+└─────────────────┘
+         │
+    Flatlines? (no heartbeat)
+         │
+         ▼
+    ⚡ DEFIBRILLATE ⚡
+         │
+    1. Kill process
+    2. Clean session files
+    3. Fix config issues
+    4. Restart OpenClaw
+         │
+         ▼
+┌─────────────────┐
+│    OpenClaw     │
+│  RESUSCITATED   │
 └─────────────────┘
 ```
 
+## Defibrillation Modes
+
+| Mode | Trigger | Action |
+|------|---------|--------|
+| **CPR** | Missed 1 heartbeat | Log warning |
+| **Defib** | Missed 3 heartbeats | Kill & restart |
+| **Paddles** | Session > 10MB | Truncate & warn |
+| **ICU** | Memory > 95% | Emergency cleanup |
+
 ## Configuration
 
-Environment variables:
-
 ```bash
-WATCHDOG_INTERVAL=5000        # Heartbeat check interval (ms)
-WATCHDOG_MISSED=3             # Max missed heartbeats before recovery
-WATCHDOG_MAX_SESSION_MB=10    # Max session file size (MB)
-GRACEFUL_TIMEOUT=10           # Seconds to wait for graceful shutdown
-OPENCLAW_CMD="npx openclaw"   # Command to launch OpenClaw
+# Vital signs check interval (ms)
+DEFIB_INTERVAL=5000
+
+# Flatline threshold (missed beats)
+DEFIB_THRESHOLD=3
+
+# Maximum session size before truncation (MB)
+DEFIB_MAX_SESSION_MB=10
+
+# Memory pressure warning (0-1)
+DEFIB_MEMORY_WARNING=0.85
 ```
 
-## Recovery Levels
+## Why "Defibrillator"?
 
-1. **Soft** - Cancel pending operations, clear queues
-2. **Medium** - Restart gateway, preserve session state
-3. **Hard** - Kill process, cleanup files, full restart
-4. **Nuclear** - Clear all state (last resort)
+Because that's exactly what this does:
+
+- OpenClaw **flatlines** (hangs indefinitely)
+- Users typically perform **system reinstall** (extreme measure)
+- ClawDefibrillator delivers a **controlled shock** (restart)
+- OpenClaw **returns to normal sinus rhythm** (works again)
+
+No more reinstalls. Just **⚡ clear!**
 
 ## Comparison
 
-| Aspect | OpenClaw Default | With Anti-Freeze |
-|--------|-----------------|------------------|
-| Hang Detection | ❌ None | ✅ 15s timeout |
-| Auto Recovery | ❌ Manual reinstall | ✅ Automatic |
-| Session Limit | ❌ Unlimited (crashes) | ✅ 10MB limit |
-| Plugin Safety | ❌ Shared memory | ✅ Worker isolation |
-| Event Loop | ❌ Can block | ✅ Monitored |
+| Scenario | Without Defibrillator | With Defibrillator |
+|----------|------------------------|-------------------|
+| Session cleanup hang | 😵 Reinstall system | ⚡ Auto-restart |
+| Status command stuck | 😵 Force kill manually | ⚡ Detected & fixed |
+| Plugin config error | 😵 Debug for hours | ⚡ Auto-corrected |
+| Memory explosion | 😵 System unresponsive | ⚡ Emergency GC |
 
-## Why This Works
+## Technical Details
 
-Unlike OpenClaw's monolithic design where one stuck operation blocks everything, this tool uses:
+### Multi-Layer Monitoring
 
-- **Process isolation** - OpenClaw runs as a child process
-- **Heartbeat monitoring** - Detects hangs within 15 seconds
-- **Automatic recovery** - Restarts without manual intervention
-- **Context preservation** - Keeps last 100 messages after recovery
+```typescript
+// 1. Process Watchdog
+const heartbeat = monitorProcess(pid);
+if (heartbeat.flatline) defibrillate();
+
+// 2. Session File Guard
+if (sessionFile.size > MAX_SIZE) {
+  sessionFile.truncate(); // Prevent deadlock
+}
+
+// 3. Config Validator
+const issues = validateConfig();
+if (issues.missingPlugins) {
+  config.removeMissingPlugins(); // Prevent startup crash
+}
+
+// 4. Memory Pressure Handler
+if (memory.usage > CRITICAL) {
+  emergencyCleanup(); // Prevent OOM
+}
+```
 
 ## Troubleshooting
 
-### OpenClaw still hangs
+### OpenClaw still flatlining?
 
-Check the logs:
 ```bash
-./openclaw-safe.sh 2>&1 | tee openclaw.log
+# Increase defibrillation intensity
+DEFIB_THRESHOLD=2 ./scripts/defib.sh
+
+# Check vitals
+./scripts/defib.sh --diagnose
 ```
 
-### Session files keep growing
+### Session files keep growing?
 
-The watchdog auto-truncates, but you can manually clean:
 ```bash
-rm ~/.openclaw/sessions/*.bak.*
-rm ~/.openclaw/sessions/*.tmp
-```
-
-### High CPU usage
-
-Adjust the heartbeat interval:
-```bash
-WATCHDOG_INTERVAL=10000 ./openclaw-safe.sh
+# Aggressive truncation
+DEFIB_MAX_SESSION_MB=5 ./scripts/defib.sh
 ```
 
 ## Contributing
 
-Contributions welcome! Areas needing help:
+Found a new way OpenClaw can flatline? 
 
-- [ ] Windows native support (PowerShell)
-- [ ] Plugin isolation via Worker Threads
-- [ ] GUI for monitoring/recovery
-- [ ] Integration tests
+```bash
+# Add new vital sign monitor
+vim src/monitors/your-monitor.ts
 
-## Related
-
-- [OpenClaw](https://github.com/openclaw/openclaw) - The AI coding assistant this tool protects
-- [OpenClaw Issue #73924](https://github.com/openclaw/openclaw/issues/73924) - Session cleanup hang bug
+# Submit PR
+git commit -m "Add monitor for [new flatline scenario]"
+```
 
 ## License
 
@@ -162,6 +199,7 @@ MIT © tiCal zzt
 
 ---
 
-**Made with ❤️ to save you from reinstalling your system.**
-
-If this tool saved you time, please ⭐ the repo!
+<p align="center">
+  <strong>Keep your OpenClaw alive. ⚡</strong><br>
+  <em>No more reinstalls. Just defibrillation.</em>
+</p>
