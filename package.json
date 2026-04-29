@@ -1,0 +1,51 @@
+{
+  "name": "@tical/openclaw-anti-freeze",
+  "version": "1.0.0",
+  "description": "Prevent OpenClaw from hanging/freezing. No more reinstalling your system.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "openclaw-watchdog": "dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "ts-node src/watchdog.ts",
+    "test": "jest",
+    "lint": "eslint src/**/*.ts",
+    "prepare": "npm run build"
+  },
+  "keywords": [
+    "openclaw",
+    "ai-agent",
+    "watchdog",
+    "stability",
+    "hang-prevention",
+    "process-management"
+  ],
+  "author": "tiCal zzt",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tical/openclaw-anti-freeze.git"
+  },
+  "bugs": {
+    "url": "https://github.com/tical/openclaw-anti-freeze/issues"
+  },
+  "homepage": "https://github.com/tical/openclaw-anti-freeze#readme",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "chalk": "^5.3.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0",
+    "ts-node": "^10.9.0",
+    "jest": "^29.0.0",
+    "@types/jest": "^29.0.0",
+    "eslint": "^8.0.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0"
+  }
+}
